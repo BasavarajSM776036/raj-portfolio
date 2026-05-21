@@ -33,13 +33,17 @@ const Contact = () => {
         formData
       );
 
-      setStatus({ type: 'success', message: 'Message sent successfully!' });
-      setFormData({ name: '', email: '', message: '' });
+      if (response.data.success) {
+        setStatus({ type: 'success', message: response.data.message });
+        setFormData({ name: '', email: '', message: '' });
+      } else {
+        setStatus({ type: 'error', message: response.data.message });
+      }
     } catch (err) {
       console.error('Error sending message:', err);
       setStatus({ 
         type: 'error', 
-        message: err.response?.data?.error || 'Cannot connect to server. Please try again later.' 
+        message: err.response?.data?.message || 'Cannot connect to server. Please try again later.' 
       });
     } finally {
       setLoading(false);

@@ -1,17 +1,20 @@
-import transporter from '../config/mail.js';
+import transporter from "../config/mail.js";
 
 export const sendContactEmail = async (req, res) => {
   const { name, email, message } = req.body;
 
   // Basic validation
   if (!name || !email || !message) {
-    return res.status(400).json({ error: 'All fields (name, email, message) are required.' });
+    return res.status(400).json({
+      success: false,
+      message: "All fields (name, email, message) are required.",
+    });
   }
 
   // Compile mail details
   const mailOptions = {
     from: `"Portfolio Contact" <${process.env.EMAIL_USER}>`,
-    to: 'basavarajmaneppagol7760@gmail.com', // destination address
+    to: "basavarajmaneppagol7760@gmail.com", // destination address
     replyTo: email, // reply back directly to contact email
     subject: `Portfolio Contact from ${name}`,
     text: `You have received a new contact submission:\n\nName: ${name}\nEmail: ${email}\n\nMessage:\n${message}`,
@@ -33,9 +36,15 @@ export const sendContactEmail = async (req, res) => {
 
   try {
     await transporter.sendMail(mailOptions);
-    return res.status(200).json({ message: 'Message sent successfully.' });
+    return res.status(200).json({
+      success: true,
+      message: "Message sent successfully!",
+    });
   } catch (error) {
-    console.error('Nodemailer Error:', error);
-    return res.status(500).json({ error: 'Failed to send email. Please try again later.' });
+    console.error("Nodemailer Error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to send message. Please try again later.",
+    });
   }
 };
