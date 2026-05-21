@@ -12,6 +12,7 @@
   "dependencies": {
     "@tsparticles/react": "^3.0.0",
     "@tsparticles/slim": "^3.0.2",
+    "axios": "^1.16.1",
     "framer-motion": "^12.40.0",
     "mern-portfolio-root": "file:..",
     "react": "^19.2.6",

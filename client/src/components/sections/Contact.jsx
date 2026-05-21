@@ -1,46 +1,21 @@
-import React, { useState } from "react";
-import { motion } from "framer-motion";
-import Button from "../common/Button";
-import Loader from "../common/Loader";
-import { fadeIn } from "../../utils/motion";
-import {
-  FiSend,
-  FiGithub,
-  FiLinkedin,
-  FiMessageSquare,
-  FiMail,
-} from "react-icons/fi";
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import axios from 'axios';
+import Button from '../common/Button';
+import Loader from '../common/Loader';
+import { fadeIn } from '../../utils/motion';
+import { FiSend, FiGithub, FiLinkedin, FiMessageSquare, FiMail } from 'react-icons/fi';
 
 const Contact = () => {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    message: "",
-  });
+  const [formData, setFormData] = useState({ name: '', email: '', message: '' });
   const [loading, setLoading] = useState(false);
-  const [status, setStatus] = useState({ type: "", message: "" });
+  const [status, setStatus] = useState({ type: '', message: '' });
 
   const socialLinks = [
-    {
-      icon: FiMessageSquare,
-      url: "https://wa.me/917760369208",
-      label: "WhatsApp",
-    },
-    {
-      icon: FiGithub,
-      url: "https://github.com/BasavarajSM776036",
-      label: "GitHub",
-    },
-    {
-      icon: FiLinkedin,
-      url: "https://linkedin.com/in/basavaraj-satteppamaneppagol-b5bb72383",
-      label: "LinkedIn",
-    },
-    {
-      icon: FiMail,
-      url: "mailto:basavarajmaneppagol7760@gmail.com",
-      label: "Email",
-    },
+    { icon: FiMessageSquare, url: 'https://wa.me/917760369208', label: 'WhatsApp' },
+    { icon: FiGithub, url: 'https://github.com/BasavarajSM776036', label: 'GitHub' },
+    { icon: FiLinkedin, url: 'https://linkedin.com/in/basavaraj-satteppamaneppagol-b5bb72383', label: 'LinkedIn' },
+    { icon: FiMail, url: 'mailto:basavarajmaneppagol7760@gmail.com', label: 'Email' }
   ];
 
   const handleChange = (e) => {
@@ -50,30 +25,21 @@ const Contact = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setStatus({ type: "", message: "" });
+    setStatus({ type: '', message: '' });
 
     try {
-      const response = await fetch("http://localhost:5000/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL}/contact`,
+        formData
+      );
 
-      const data = await response.json();
-
-      if (response.ok) {
-        setStatus({ type: "success", message: "Message sent successfully!" });
-        setFormData({ name: "", email: "", message: "" });
-      } else {
-        setStatus({
-          type: "error",
-          message: `Error: ${data.error || "Something went wrong"}`,
-        });
-      }
+      setStatus({ type: 'success', message: 'Message sent successfully!' });
+      setFormData({ name: '', email: '', message: '' });
     } catch (err) {
-      setStatus({
-        type: "error",
-        message: "Cannot connect to server. Please try again later.",
+      console.error('Error sending message:', err);
+      setStatus({ 
+        type: 'error', 
+        message: err.response?.data?.error || 'Cannot connect to server. Please try again later.' 
       });
     } finally {
       setLoading(false);
@@ -85,7 +51,7 @@ const Contact = () => {
       <div className="max-w-6xl mx-auto px-6">
         <div className="flex flex-col text-center mb-16">
           <motion.h2
-            variants={fadeIn("down", "tween", 0.1, 0.5)}
+            variants={fadeIn('down', 'tween', 0.1, 0.5)}
             initial="hidden"
             whileInView="show"
             viewport={{ once: true }}
@@ -94,21 +60,20 @@ const Contact = () => {
             Let's Connect
           </motion.h2>
           <motion.p
-            variants={fadeIn("down", "tween", 0.2, 0.5)}
+            variants={fadeIn('down', 'tween', 0.2, 0.5)}
             initial="hidden"
             whileInView="show"
             viewport={{ once: true }}
             className="text-lg text-text-secondary font-body"
           >
-            Feel free to reach out for collaborations, opportunities, or just a
-            friendly chat!
+            Feel free to reach out for collaborations, opportunities, or just a friendly chat!
           </motion.p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
           {/* Left Side - Contact Form */}
           <motion.div
-            variants={fadeIn("right", "tween", 0.3, 0.5)}
+            variants={fadeIn('right', 'tween', 0.3, 0.5)}
             initial="hidden"
             whileInView="show"
             viewport={{ once: true }}
@@ -161,34 +126,18 @@ const Contact = () => {
                 </div>
 
                 {status.message && (
-                  <div
-                    className={`p-4 rounded-xl border text-sm font-body ${
-                      status.type === "success"
-                        ? "bg-green-500/10 border-green-500/30 text-green-400"
-                        : "bg-red-500/10 border-red-500/30 text-red-400"
-                    }`}
-                  >
+                  <div className={`p-4 rounded-xl border text-sm font-body ${
+                    status.type === 'success'
+                      ? 'bg-green-500/10 border-green-500/30 text-green-400'
+                      : 'bg-red-500/10 border-red-500/30 text-red-400'
+                  }`}>
                     {status.message}
                   </div>
                 )}
 
-                <motion.div
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  <Button
-                    type="submit"
-                    variant="primary"
-                    className="w-full"
-                    disabled={loading}
-                  >
-                    {loading ? (
-                      <Loader size="small" />
-                    ) : (
-                      <span className="flex items-center gap-2">
-                        Send Message <FiSend />
-                      </span>
-                    )}
+                <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                  <Button type="submit" variant="primary" className="w-full" disabled={loading}>
+                    {loading ? <Loader size="small" /> : <span className="flex items-center gap-2">Send Message <FiSend /></span>}
                   </Button>
                 </motion.div>
               </form>
@@ -197,7 +146,7 @@ const Contact = () => {
 
           {/* Right Side - Contact Info Cards */}
           <motion.div
-            variants={fadeIn("left", "tween", 0.4, 0.5)}
+            variants={fadeIn('left', 'tween', 0.4, 0.5)}
             initial="hidden"
             whileInView="show"
             viewport={{ once: true }}
@@ -216,9 +165,7 @@ const Contact = () => {
                   <social.icon className="text-accent-purple" size={22} />
                 </div>
                 <div className="flex-1">
-                  <h4 className="text-white font-heading font-semibold">
-                    {social.label}
-                  </h4>
+                  <h4 className="text-white font-heading font-semibold">{social.label}</h4>
                 </div>
               </motion.a>
             ))}
